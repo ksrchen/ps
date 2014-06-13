@@ -1,0 +1,40 @@
+[{
+	ProfileKey: 'dddgXJF22z9lCvO91baHng==',
+	ProfileID: 1,
+	ProfileName: 'loopnet.com',
+	Provider: {
+		ProviderName: 'loopnet cybsource',
+		ProviderType: 'cybersource',
+		ProviderSettings : [
+			{
+				SettingName: 'tokencreateurl', 
+				SettingValue: 'https://testsecureacceptance.cybersource.com/silent/embedded/token/create'
+			},
+			{
+				SettingName: 'tranactionProcessorUrl', 
+				SettingValue: 'https://ics2wstest.ic3.com/commerce/1.x/transactionProcessor'
+			},
+			{
+				SettingName: 'profile_id', 
+				SettingValue: 'LNECOM1'
+			},
+			{
+				SettingName: 'access_key', 
+				SettingValue: '2133ed425ed43e63aa8b4fdd6e8ad28a'
+			},
+			{
+				SettingName: 'secret', 
+				SettingValue: 'e0507f1e2d1040f589502e2f323b60a63925e8acd1064e66815984ef85827b16f9f6a127eb6a473d9c31cd7aff192f6c0b1ed69fd65449fdaa819c5534432c199dce82f9dd704fbfa28a41c4a037f9d58b3e68841b3a4e8d8ea13106f01cf65d4b1567fced0a4eed9cb1d5e9773fc8201de08062e00244c7840494d4378ba784'
+			},
+			{
+				SettingName: 'merchant_id', 
+				SettingValue: 'loopnet'
+			},
+			{
+				SettingName: 'transaction_key', 
+				SettingValue: '1W6CKP3aroqcQdPeC4FcMMP65tpHr8Qrdx1csQx+dz5iSNVYR2oVIktWspRBLCArRhXNpFDtENoQamlSoCRY82ilQSrq4+DTfiVAl6VGg/C5+GL70Qs3DgDVJg1ICigxmehqnUOlKHXOIQzjjlrvg02dJRONsXXtd1g3jHF3JLMdFHSivx5ZbRua0ufYQFPXyQvcHPGeHe7nBUAbPiIG7l8+q8bzKKKJiRDcwgu/vtUETLGZX5DPBVait/5EGqjTzPHkHJaXkTg+neD9yEfuA2EdH4vj+ioxcf7i4g/O6SWQeXoaVT1xz53hxiYj5KRI/X6ARoe1b04PR22mTAVgjA=='
+			}			
+			]		
+		}
+	}
+]
