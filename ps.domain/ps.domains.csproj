@@ -94,6 +94,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CybersourcePaymentService.cs" />
+    <Compile Include="CybersourceServiceBase.cs" />
     <Compile Include="CybersourceTokenService.cs" />
     <Compile Include="IPaymentService.cs" />
     <Compile Include="IProfileDomain.cs" />

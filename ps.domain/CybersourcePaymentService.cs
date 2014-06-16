@@ -9,7 +9,7 @@ using ps.models;
 
 namespace ps.domain
 {
-    public class CybersourcePaymentService : IPaymentService
+    public class CybersourcePaymentService :  CybersourceServiceBase, IPaymentService
     {
         public models.TransactionResponse Sales(models.Profile profile, string paymentToken, models.TransactionRequest transactionRequest)
         {
@@ -211,37 +211,7 @@ namespace ps.domain
             return ProcessReply(profile, reply);
         }
 
-        private static Cybersource.RequestMessage CreateRequest()
-        {
-
-            RequestMessage request = new RequestMessage();
-
-            request.clientLibrary = ".NET WCF";
-            request.clientLibraryVersion = Environment.Version.ToString();
-            request.clientEnvironment =
-                Environment.OSVersion.Platform +
-                Environment.OSVersion.Version.ToString();
-
-            return request;
-        }
-
-        
-        private static Cybersource.TransactionProcessorClient GetCybersourceService(string serviceEndpoint,
-            string merchantId,
-            string transactionKey)
-        {
-            var binding = new BasicHttpBinding();
-            binding.Security.Mode = BasicHttpSecurityMode.TransportWithMessageCredential;
-
-            var address = new EndpointAddress(serviceEndpoint);
-            var Service = new Cybersource.TransactionProcessorClient(binding, address);
-            Service.ChannelFactory.Credentials.UserName.UserName = merchantId;
-            Service.ChannelFactory.Credentials.UserName.Password = transactionKey;
-            return Service;
-
-        }
-
-        private models.TransactionResponse ProcessReply(Profile profile, ReplyMessage reply)
+        protected models.TransactionResponse ProcessReply(Profile profile, ReplyMessage reply)
         {
             var response = new models.TransactionResponse();
             response.Status = true;
@@ -256,9 +226,6 @@ namespace ps.domain
             }
             return response;
         }
-        private string FormatPrice(int price)
-        {
-            return ((decimal)price / 100.0m).ToString("0.00");
-        }
+        
     }
 }
