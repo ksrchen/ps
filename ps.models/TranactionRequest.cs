@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ps.models
 {
-    public class TranactionRequest
+    public class TransactionRequest
     {
         public TransactionTypes TransactionType { get; set; }
         public string ReferenceNumber { get; set; }

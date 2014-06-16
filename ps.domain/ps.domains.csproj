@@ -94,8 +94,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CybersourcePaymentService.cs" />
+    <Compile Include="CybersourceTokenService.cs" />
     <Compile Include="IPaymentService.cs" />
     <Compile Include="IProfileDomain.cs" />
+    <Compile Include="IServiceLocator.cs" />
     <Compile Include="ITokenService.cs" />
     <Compile Include="ObjectExtension.cs" />
     <Compile Include="ProfileDomain.cs" />
@@ -105,6 +107,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
+    <Compile Include="ServiceLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

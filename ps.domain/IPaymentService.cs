@@ -9,8 +9,8 @@ namespace ps.domain
 {
     public interface IPaymentService
     {
-        TransactionResponse Sales(Profile profile, string paymentToken, TranactionRequest request);
-        TransactionResponse Refund(Profile profile, string originalTranactionId, TranactionRequest request);
+        TransactionResponse Sales(Profile profile, string paymentToken, TransactionRequest request);
+        TransactionResponse Refund(Profile profile, string originalTranactionId, TransactionRequest request);
         TransactionResponse Void(Profile profile, string originalTranactionId, string referenceNumber);
     }
 }

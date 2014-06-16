@@ -16,7 +16,7 @@ namespace ps.test
             var profile = profileDomain.Get(1);
 
             var service = new CybersourcePaymentService();
-            var result = service.Sales(profile, "4018227272460176195662", new models.TranactionRequest
+            var result = service.Sales(profile, "4018227272460176195662", new models.TransactionRequest
             {
                 Amount = 9900,
                 Currency = "USD",
@@ -70,7 +70,7 @@ namespace ps.test
             var profile = profileDomain.Get(1);
 
             var service = new CybersourcePaymentService();
-            var result = service.Refund(profile, "4024127683710176056442", new models.TranactionRequest
+            var result = service.Refund(profile, "4024127683710176056442", new models.TransactionRequest
             {
                 Amount = 100,
                 Currency = "USD",

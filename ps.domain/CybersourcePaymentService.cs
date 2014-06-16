@@ -11,7 +11,7 @@ namespace ps.domain
 {
     public class CybersourcePaymentService : IPaymentService
     {
-        public models.TransactionResponse Sales(models.Profile profile, string paymentToken, models.TranactionRequest transactionRequest)
+        public models.TransactionResponse Sales(models.Profile profile, string paymentToken, models.TransactionRequest transactionRequest)
         {
             var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
             var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
@@ -102,7 +102,7 @@ namespace ps.domain
         }
 
 
-        public models.TransactionResponse Refund(models.Profile profile, string originalTranactionId, models.TranactionRequest transactionRequest)
+        public models.TransactionResponse Refund(models.Profile profile, string originalTranactionId, models.TransactionRequest transactionRequest)
         {
             var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
             var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;

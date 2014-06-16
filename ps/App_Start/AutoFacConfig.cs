@@ -21,8 +21,7 @@ namespace ps
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 
             //// Register other dependencies.
-            //builder.Register(c => new CyberSourcePaymentToken()).As<IPaymentTokenDomain>().InstancePerApiRequest();
-            //builder.Register(c => new CyberSourceCheckOutDomain()).As<ICheckOutDomain>().InstancePerApiRequest();
+            builder.Register(c => new ServiceLocator()).As<IServiceLocator>().InstancePerApiRequest();
             builder.Register(c => new ProfileDomain()).As<IProfileDomain>().InstancePerApiRequest();
 
             // Build the container.
