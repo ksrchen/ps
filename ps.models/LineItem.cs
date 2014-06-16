@@ -16,6 +16,7 @@ namespace ps.models
         public int Quantity { get; set; }
         public decimal TaxRate { get; set; }
         public int TaxAmount { get; set; }
+        public int DiscountAmount { get; set; }
         public string CommodityCode { get; set; }
     }
 }
