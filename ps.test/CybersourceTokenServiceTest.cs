@@ -69,7 +69,7 @@ namespace ps.test
                 LastName = "doe",
                 City = "glendora",
                 Country ="US",
-                EmailAddress = "foo@bar.com",
+                EmailAddress = "a@b.com ",
                 PostalCode = "91789",
                 State = "CA",
                 StreetLine1 = "foo street",

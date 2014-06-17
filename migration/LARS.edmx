@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="LARSModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityContainer Name="LARSModelStoreContainer">
+          <EntitySet Name="CCInfo_t" EntityType="LARSModel.Store.CCInfo_t" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Contact_t" EntityType="LARSModel.Store.Contact_t" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="FK_CCInfo_t_Contact_t" Association="LARSModel.Store.FK_CCInfo_t_Contact_t">
+            <End Role="Contact_t" EntitySet="Contact_t" />
+            <End Role="CCInfo_t" EntitySet="CCInfo_t" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="CCInfo_t">
+          <Key>
+            <PropertyRef Name="CCInfoID" />
+            <PropertyRef Name="CCNum" />
+          </Key>
+          <Property Name="CCInfoID" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="numeric" Nullable="false" />
+          <Property Name="CCNum" Type="varchar" Nullable="false" MaxLength="500" />
+          <Property Name="CCExpDate" Type="varchar" MaxLength="50" />
+          <Property Name="CCTypeID" Type="numeric" />
+          <Property Name="IsDefault" Type="tinyint" />
+          <Property Name="ImportSource" Type="tinyint" />
+          <Property Name="ContactID" Type="numeric" />
+          <Property Name="Active" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Contact_t">
+          <Key>
+            <PropertyRef Name="ContactID" />
+          </Key>
+          <Property Name="ContactID" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="varchar" MaxLength="500" />
+          <Property Name="LastName" Type="varchar" MaxLength="500" />
+          <Property Name="CompanyName" Type="varchar" MaxLength="500" />
+          <Property Name="EmailAddress" Type="varchar" MaxLength="500" />
+          <Property Name="StreetLine1" Type="varchar" MaxLength="1000" />
+          <Property Name="StreetLine2" Type="varchar" MaxLength="1000" />
+          <Property Name="City" Type="varchar" MaxLength="1000" />
+          <Property Name="State" Type="varchar" MaxLength="50" />
+          <Property Name="Zipcode" Type="nvarchar" MaxLength="50" />
+          <Property Name="Country" Type="nvarchar" MaxLength="50" />
+          <Property Name="PhoneID1" Type="numeric" Precision="10" />
+          <Property Name="PhoneID2" Type="numeric" Precision="10" />
+          <Property Name="FaxID" Type="numeric" Precision="10" />
+          <Property Name="ImportSource" Type="tinyint" />
+          <Property Name="Status" Type="tinyint" />
+        </EntityType>
+        <Association Name="FK_CCInfo_t_Contact_t">
+          <End Role="Contact_t" Type="LARSModel.Store.Contact_t" Multiplicity="0..1" />
+          <End Role="CCInfo_t" Type="LARSModel.Store.CCInfo_t" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact_t">
+              <PropertyRef Name="ContactID" />
+            </Principal>
+            <Dependent Role="CCInfo_t">
+              <PropertyRef Name="ContactID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="LARSModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="LARSEntities" p1:LazyLoadingEnabled="true">
+          <EntitySet Name="CCInfo_t" EntityType="LARSModel.CCInfo_t" />
+          <EntitySet Name="Contact_t" EntityType="LARSModel.Contact_t" />
+          <AssociationSet Name="FK_CCInfo_t_Contact_t" Association="LARSModel.FK_CCInfo_t_Contact_t">
+            <End Role="Contact_t" EntitySet="Contact_t" />
+            <End Role="CCInfo_t" EntitySet="CCInfo_t" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="CCInfo_t">
+          <Key>
+            <PropertyRef Name="CCInfoID" />
+            <PropertyRef Name="CCNum" />
+          </Key>
+          <Property Name="CCInfoID" Type="Decimal" Nullable="false" Precision="18" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerID" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="CCNum" Type="String" Nullable="false" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="CCExpDate" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="CCTypeID" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="IsDefault" Type="Byte" />
+          <Property Name="ImportSource" Type="Byte" />
+          <Property Name="ContactID" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Active" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Contact_t" Relationship="LARSModel.FK_CCInfo_t_Contact_t" FromRole="CCInfo_t" ToRole="Contact_t" />
+        </EntityType>
+        <EntityType Name="Contact_t">
+          <Key>
+            <PropertyRef Name="ContactID" />
+          </Key>
+          <Property Name="ContactID" Type="Decimal" Nullable="false" Precision="18" Scale="0" p1:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="LastName" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="CompanyName" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="EmailAddress" Type="String" MaxLength="500" Unicode="false" FixedLength="false" />
+          <Property Name="StreetLine1" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
+          <Property Name="StreetLine2" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
+          <Property Name="City" Type="String" MaxLength="1000" Unicode="false" FixedLength="false" />
+          <Property Name="State" Type="String" MaxLength="50" Unicode="false" FixedLength="false" />
+          <Property Name="Zipcode" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="Country" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
+          <Property Name="PhoneID1" Type="Decimal" Precision="10" Scale="0" />
+          <Property Name="PhoneID2" Type="Decimal" Precision="10" Scale="0" />
+          <Property Name="FaxID" Type="Decimal" Precision="10" Scale="0" />
+          <Property Name="ImportSource" Type="Byte" />
+          <Property Name="Status" Type="Byte" />
+          <NavigationProperty Name="CCInfo_t" Relationship="LARSModel.FK_CCInfo_t_Contact_t" FromRole="Contact_t" ToRole="CCInfo_t" />
+        </EntityType>
+        <Association Name="FK_CCInfo_t_Contact_t">
+          <End Role="Contact_t" Type="LARSModel.Contact_t" Multiplicity="0..1" />
+          <End Role="CCInfo_t" Type="LARSModel.CCInfo_t" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact_t">
+              <PropertyRef Name="ContactID" />
+            </Principal>
+            <Dependent Role="CCInfo_t">
+              <PropertyRef Name="ContactID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="LARSModelStoreContainer" CdmEntityContainer="LARSEntities">
+          <EntitySetMapping Name="CCInfo_t">
+            <EntityTypeMapping TypeName="LARSModel.CCInfo_t">
+              <MappingFragment StoreEntitySet="CCInfo_t">
+                <ScalarProperty Name="CCInfoID" ColumnName="CCInfoID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
+                <ScalarProperty Name="CCNum" ColumnName="CCNum" />
+                <ScalarProperty Name="CCExpDate" ColumnName="CCExpDate" />
+                <ScalarProperty Name="CCTypeID" ColumnName="CCTypeID" />
+                <ScalarProperty Name="IsDefault" ColumnName="IsDefault" />
+                <ScalarProperty Name="ImportSource" ColumnName="ImportSource" />
+                <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Contact_t">
+            <EntityTypeMapping TypeName="LARSModel.Contact_t">
+              <MappingFragment StoreEntitySet="Contact_t">
+                <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="CompanyName" ColumnName="CompanyName" />
+                <ScalarProperty Name="EmailAddress" ColumnName="EmailAddress" />
+                <ScalarProperty Name="StreetLine1" ColumnName="StreetLine1" />
+                <ScalarProperty Name="StreetLine2" ColumnName="StreetLine2" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="State" ColumnName="State" />
+                <ScalarProperty Name="Zipcode" ColumnName="Zipcode" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="PhoneID1" ColumnName="PhoneID1" />
+                <ScalarProperty Name="PhoneID2" ColumnName="PhoneID2" />
+                <ScalarProperty Name="FaxID" ColumnName="FaxID" />
+                <ScalarProperty Name="ImportSource" ColumnName="ImportSource" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

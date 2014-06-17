@@ -16,6 +16,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ps.models", "ps.models\ps.m
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ps.test", "ps.test\ps.test.csproj", "{19F64F56-BDE2-42E7-B61A-D17FC6F7F63C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "migration", "migration\migration.csproj", "{55748828-44FD-4C27-BA77-7E16C1219078}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{19F64F56-BDE2-42E7-B61A-D17FC6F7F63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19F64F56-BDE2-42E7-B61A-D17FC6F7F63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19F64F56-BDE2-42E7-B61A-D17FC6F7F63C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{55748828-44FD-4C27-BA77-7E16C1219078}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{55748828-44FD-4C27-BA77-7E16C1219078}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{55748828-44FD-4C27-BA77-7E16C1219078}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{55748828-44FD-4C27-BA77-7E16C1219078}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
