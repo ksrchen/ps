@@ -4,17 +4,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ps.domain.Cybersource;
+using ps.models;
 
 namespace ps.domain
 {
     public class CybersourceTokenService : CybersourceServiceBase, ITokenService
     {
-        public models.UpdateTokenResponse Update(models.Profile profile, string token, models.CreditCard creditCard)
+        public UpdateTokenResponse Update(Profile profile, string token, CreditCard creditCard)
         {
             var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
             var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
             var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
             var request = CreateRequest();
+
+            request.merchantID = merchantId;
+            request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
 
             request.paySubscriptionUpdateService = new PaySubscriptionUpdateService();
             request.paySubscriptionUpdateService.run = "true";
@@ -29,27 +33,29 @@ namespace ps.domain
             var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
 
             var reply = client.runTransaction(request);
-            var response = new models.UpdateTokenResponse();
+            var response = new UpdateTokenResponse();
             response.Status = true;
             response.ReasonCode = reply.reasonCode;
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + reply.missingField;
+                response.Message = reply.reasonCode + ". " + string.Join(",", reply.missingField);
             }
             return response;
 
         }
 
-        public models.DeleteTokenResponse Delete(models.Profile profile, string token)
+        public DeleteTokenResponse Delete(Profile profile, string token)
         {
             var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
             var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
             var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
             var request = CreateRequest();
+            request.merchantID = merchantId;
+            request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
 
             request.paySubscriptionDeleteService = new PaySubscriptionDeleteService();
-            request.paySubscriptionRetrieveService.run = "true";
+            request.paySubscriptionDeleteService.run = "true";
 
             request.recurringSubscriptionInfo = new RecurringSubscriptionInfo();
             request.recurringSubscriptionInfo.subscriptionID = token;
@@ -57,25 +63,26 @@ namespace ps.domain
             var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
 
             var reply = client.runTransaction(request);
-            var response = new models.DeleteTokenResponse();
+            var response = new DeleteTokenResponse();
             response.Status = true;
             response.ReasonCode = reply.reasonCode;
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + reply.missingField;
+                response.Message = reply.reasonCode + ". " + string.Join(",", reply.missingField);
             }
             return response;
         }
 
-        public models.GetTokenResponse Get(models.Profile profile, string token)
+        public GetTokenResponse Get(Profile profile, string token)
         {
             var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
             var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
             var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
 
             var request = CreateRequest();
-
+            request.merchantID = merchantId;
+            request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
             request.paySubscriptionRetrieveService = new PaySubscriptionRetrieveService();
             request.paySubscriptionRetrieveService.run = "true";
 
@@ -85,24 +92,24 @@ namespace ps.domain
             var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
 
             var reply = client.runTransaction(request);
-            var response = new models.GetTokenResponse();
+            var response = new GetTokenResponse();
             response.Status = true;
             response.ReasonCode = reply.reasonCode;
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + reply.missingField;
+                response.Message = reply.reasonCode + ". " + string.Join(",", reply.missingField); 
             }
             else
             {
-                response.CreditCard = new models.CreditCard
+                response.CreditCard = new CreditCard
                 {
                     CardNumber = reply.paySubscriptionRetrieveReply.cardAccountNumber,
                     CardType = reply.paySubscriptionRetrieveReply.cardType,
                     ExpirationMonth = reply.paySubscriptionRetrieveReply.cardExpirationMonth,
                     ExpirationYear = reply.paySubscriptionRetrieveReply.cardExpirationYear,                    
                 };
-                response.BillingContact = new models.Contact
+                response.BillingContact = new Contact
                 {
                     FirstName = reply.paySubscriptionRetrieveReply.firstName,
                     LastName = reply.paySubscriptionRetrieveReply.lastName,
@@ -119,5 +126,55 @@ namespace ps.domain
             return response;
         }
 
+        public CreateTokenResponse Create(Profile profile, CreditCard creditCard, Contact billingContact)
+        {
+             var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
+            var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
+            var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
+
+            var request = CreateRequest();
+            request.merchantID = merchantId;
+            request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
+            request.paySubscriptionCreateService = new PaySubscriptionCreateService();
+            request.paySubscriptionCreateService.run = "true";
+
+            request.recurringSubscriptionInfo = new RecurringSubscriptionInfo() { frequency = "on-demand"};
+            request.card = new Card()
+            {
+                cardType = creditCard.CardType,
+                accountNumber = creditCard.CardNumber,
+                expirationMonth = creditCard.ExpirationMonth,
+                expirationYear = creditCard.ExpirationYear
+            };
+            request.billTo = new BillTo()
+            {
+                firstName = billingContact.FirstName,
+                lastName = billingContact.LastName,
+                city = billingContact.City,
+                country = billingContact.Country,
+                email = billingContact.EmailAddress,
+                postalCode = billingContact.PostalCode,
+                state = billingContact.State,
+                street1 = billingContact.StreetLine1,
+            };
+            request.purchaseTotals = new PurchaseTotals() { currency = "USD" };
+
+            var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
+
+            var reply = client.runTransaction(request);
+            var response = new CreateTokenResponse();
+            response.Status = true;
+            response.ReasonCode = reply.reasonCode;
+            if (reply.reasonCode != "100")
+            {
+                response.Status = false;
+                response.Message = reply.reasonCode + ". " + string.Join(",", reply.missingField); 
+            }
+            else
+            {
+                response.Token = reply.paySubscriptionCreateReply.subscriptionID;       
+            }
+            return response;
+        }        
     }
 }

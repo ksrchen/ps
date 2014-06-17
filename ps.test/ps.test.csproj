@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="CybersourcePaymentServiceTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CybersourceTokenServiceTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ps.domain\ps.domains.csproj">

@@ -12,5 +12,6 @@ namespace ps.domain
         UpdateTokenResponse Update(Profile profile, string token, CreditCard creditCard);
         DeleteTokenResponse Delete(Profile profile, string token);
         GetTokenResponse Get(Profile profile, string token);
+        CreateTokenResponse Create(Profile profile, CreditCard creditCard, Contact billingContact);
     }
 }

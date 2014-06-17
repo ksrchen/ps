@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contact.cs" />
+    <Compile Include="CreateTokenResponse.cs" />
     <Compile Include="CreditCard.cs" />
     <Compile Include="DeleteTokenResponse.cs" />
     <Compile Include="GetTokenResponse.cs" />
