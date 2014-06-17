@@ -10,14 +10,10 @@ using ps.models;
 
 namespace ps.Controllers
 {
-    public class TokenController : ApiController
+    public class TokenController : BaseApiController
     {
-        private readonly IServiceLocator _serviceLocator;
-        private readonly IProfileDomain _profileDomain;
-        public TokenController(IServiceLocator serviceLocator, IProfileDomain profileDomain)
+        public TokenController(IServiceLocator serviceLocator, IProfileDomain profileDomain) : base(serviceLocator, profileDomain)
         {
-            _serviceLocator = serviceLocator;
-            _profileDomain = profileDomain;
         }
         /// <summary>
         /// Retrieve credit card detail and billing contact associated with a payment token
@@ -92,19 +88,6 @@ namespace ps.Controllers
             }
 
         }
-        private static void ParseToken(string inputToken, out int profileId, out string providerToken)
-        {
-            const string pattern = "p([0-9]*)-([a-zA-Z0-9]*)";
-            var matches = Regex.Match(inputToken, pattern);
-            if (matches.Success)
-            {
-                profileId = int.Parse(matches.Groups[1].ToString());
-                providerToken = matches.Groups[2].ToString();
-            }
-            else
-            {
-                throw new Exception(string.Format("invalid token format"));
-            }
-        }
+        
     }
 }

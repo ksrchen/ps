@@ -14,15 +14,11 @@ namespace ps.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public class TransactionController : ApiController
+    public class TransactionController : BaseApiController
     {
-        private readonly IServiceLocator _serviceLocator;
-        private readonly IProfileDomain _profileDomain;
-        private const string pattern =  "p([0-9]*)-([a-zA-Z0-9]*)";
-        public TransactionController(IServiceLocator serviceLocator, IProfileDomain profileDomain)
+        public TransactionController(IServiceLocator serviceLocator, IProfileDomain profileDomain) :
+            base(serviceLocator, profileDomain)
         {
-            _serviceLocator = serviceLocator;
-            _profileDomain = profileDomain;
         }
         /// <summary>
         /// Process a payment transaction request
@@ -37,9 +33,9 @@ namespace ps.Controllers
                 {
                     case TransactionTypes.Refund:
                         {
-                            var matches = Regex.Match(request.TransactionId, pattern);
-                            int profileId = int.Parse(matches.Groups[1].ToString());
-                            string transactionId = matches.Groups[2].ToString();
+                            int profileId = 0;
+                            string transactionId;
+                            ParseTransactionId(request.TransactionId, out profileId, out transactionId);
 
                             var profile = _profileDomain.Get(profileId);
                             var service = _serviceLocator.GetPaymentService(profile.Provider.ProviderType);
@@ -49,21 +45,21 @@ namespace ps.Controllers
                         }
                     case TransactionTypes.Sales:
                         {
-                            var matches = Regex.Match(request.PaymentToken, pattern);
-                            int profileId = int.Parse(matches.Groups[1].ToString());
-                            string paymentToken = matches.Groups[2].ToString();
+                            int profileId = 0;
+                            string providerToken;
+                            ParseToken(request.PaymentToken, out profileId, out providerToken);
 
                             var profile = _profileDomain.Get(profileId);
                             var service = _serviceLocator.GetPaymentService(profile.Provider.ProviderType);
-                            var resp = service.Sales(profile, paymentToken, request);
+                            var resp = service.Sales(profile, providerToken, request);
 
                             return Request.CreateResponse<TransactionResponse>(HttpStatusCode.OK, resp);
                         }
                     case TransactionTypes.Void:
                         {
-                            var matches = Regex.Match(request.TransactionId, pattern);
-                            int profileId = int.Parse(matches.Groups[1].ToString());
-                            string transactionId = matches.Groups[2].ToString();
+                            int profileId = 0;
+                            string transactionId;
+                            ParseTransactionId(request.TransactionId, out profileId, out transactionId);
 
                             var profile = _profileDomain.Get(profileId);
                             var service = _serviceLocator.GetPaymentService(profile.Provider.ProviderType);
