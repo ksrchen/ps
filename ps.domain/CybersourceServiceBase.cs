@@ -46,5 +46,17 @@ namespace ps.domain
         {
             return ((decimal)price / 100.0m).ToString("0.00");
         }
+        protected string GetMerchantId(Profile profile)
+        {
+            return profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
+        }
+        protected string GetTransactionKey(Profile profile)
+        {
+            return profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
+        }
+        protected string GetServiceEndPoint(Profile profile)
+        {
+            return profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
+        }
     }
 }

@@ -13,9 +13,9 @@ namespace ps.domain
     {
         public models.TransactionResponse Sales(models.Profile profile, string paymentToken, models.TransactionRequest transactionRequest)
         {
-            var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
-            var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
-            var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
+            var merchantId = GetMerchantId(profile);
+            var transactionKey = GetTransactionKey(profile);
+            var serviceEndPoint = GetServiceEndPoint(profile);
 
             var request = CreateRequest();
             request.merchantID = merchantId;
@@ -104,9 +104,9 @@ namespace ps.domain
 
         public models.TransactionResponse Refund(models.Profile profile, string originalTranactionId, models.TransactionRequest transactionRequest)
         {
-            var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
-            var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
-            var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
+            var merchantId = GetMerchantId(profile);
+            var transactionKey = GetTransactionKey(profile);
+            var serviceEndPoint = GetServiceEndPoint(profile);
 
             var request = CreateRequest();
             request.merchantID = merchantId;
@@ -192,9 +192,9 @@ namespace ps.domain
 
         public models.TransactionResponse Void(models.Profile profile, string originalTranactionId, string referenceNumber)
         {
-            var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
-            var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
-            var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
+            var merchantId = GetMerchantId(profile);
+            var transactionKey = GetTransactionKey(profile);
+            var serviceEndPoint = GetServiceEndPoint(profile);
 
             var request = CreateRequest();
             request.merchantID = merchantId;

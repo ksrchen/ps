@@ -12,9 +12,9 @@ namespace ps.domain
     {
         public UpdateTokenResponse Update(Profile profile, string token, CreditCard creditCard)
         {
-            var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
-            var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
-            var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
+            var merchantId = GetMerchantId(profile);
+            var transactionKey = GetTransactionKey(profile);
+            var serviceEndPoint = GetServiceEndPoint(profile);
             var request = CreateRequest();
 
             request.merchantID = merchantId;
@@ -47,9 +47,9 @@ namespace ps.domain
 
         public DeleteTokenResponse Delete(Profile profile, string token)
         {
-            var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
-            var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
-            var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
+            var merchantId = GetMerchantId(profile);
+            var transactionKey = GetTransactionKey(profile);
+            var serviceEndPoint = GetServiceEndPoint(profile);
             var request = CreateRequest();
             request.merchantID = merchantId;
             request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
@@ -76,9 +76,9 @@ namespace ps.domain
 
         public GetTokenDetailResponse Get(Profile profile, string token)
         {
-            var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
-            var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
-            var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
+            var merchantId = GetMerchantId(profile);
+            var transactionKey = GetTransactionKey(profile);
+            var serviceEndPoint = GetServiceEndPoint(profile);
 
             var request = CreateRequest();
             request.merchantID = merchantId;
@@ -128,9 +128,9 @@ namespace ps.domain
 
         public CreateTokenResponse Create(Profile profile, CreditCard creditCard, Contact billingContact)
         {
-             var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
-            var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
-            var serviceEndPoint = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
+            var merchantId = GetMerchantId(profile);
+            var transactionKey = GetTransactionKey(profile);
+            var serviceEndPoint = GetServiceEndPoint(profile);
 
             var request = CreateRequest();
             request.merchantID = merchantId;
