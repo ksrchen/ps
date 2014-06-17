@@ -79,6 +79,9 @@ namespace ps.Areas.HelpPage
             //// Uncomment the following to correct the sample response when the action returns an HttpResponseMessage with ObjectContent<string>.
             //// The sample will be generated as if the controller named "Values" and action named "Post" were returning a string.
             config.SetActualResponseType(typeof(TransactionResponse), "Transaction", "Post");
+            config.SetActualResponseType(typeof(UpdateTokenResponse), "Token", "Put");
+            config.SetActualResponseType(typeof(GetTokenDetailResponse), "Token", "Get");
+            config.SetActualResponseType(typeof(DeleteTokenResponse), "Token", "Delete");
         }
 
 #if Handle_PageResultOfT

@@ -74,7 +74,7 @@ namespace ps.domain
             return response;
         }
 
-        public GetTokenResponse Get(Profile profile, string token)
+        public GetTokenDetailResponse Get(Profile profile, string token)
         {
             var merchantId = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "merchant_id").SettingValue;
             var transactionKey = profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transaction_key").SettingValue;
@@ -92,7 +92,7 @@ namespace ps.domain
             var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
 
             var reply = client.runTransaction(request);
-            var response = new GetTokenResponse();
+            var response = new GetTokenDetailResponse();
             response.Status = true;
             response.ReasonCode = reply.reasonCode;
             if (reply.reasonCode != "100")

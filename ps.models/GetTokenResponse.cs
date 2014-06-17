@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ps.models
 {
-    public class GetTokenResponse : ResponseBase
+    public class GetTokenDetailResponse : ResponseBase
     {
         public CreditCard CreditCard { get; set; }
         public Contact BillingContact { get; set; }
