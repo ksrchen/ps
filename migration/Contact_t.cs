@@ -17,6 +17,8 @@ namespace migration
         public Contact_t()
         {
             this.CCInfo_t = new HashSet<CCInfo_t>();
+            this.Customer_t = new HashSet<Customer_t>();
+            this.Customer_t1 = new HashSet<Customer_t>();
         }
     
         public decimal ContactID { get; set; }
@@ -37,5 +39,7 @@ namespace migration
         public Nullable<byte> Status { get; set; }
     
         public virtual ICollection<CCInfo_t> CCInfo_t { get; set; }
+        public virtual ICollection<Customer_t> Customer_t { get; set; }
+        public virtual ICollection<Customer_t> Customer_t1 { get; set; }
     }
 }

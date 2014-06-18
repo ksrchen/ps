@@ -73,7 +73,9 @@ namespace ps.test
                 PostalCode = "91789",
                 State = "CA",
                 StreetLine1 = "foo street",
-            });
+            },
+            DateTime.Now.Ticks.ToString()
+            );
 
             Assert.IsTrue(result.Status);
 
@@ -106,7 +108,7 @@ namespace ps.test
                 PostalCode = "91789",
                 State = "CA",
                 StreetLine1 = "foo street",
-            });
+            }, DateTime.Now.Ticks.ToString());
 
             return result.Token;
         }

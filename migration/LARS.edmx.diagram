@@ -8,6 +8,10 @@
         <EntityTypeShape EntityType="LARSModel.CCInfo_t" Width="1.5" PointX="3" PointY="1.625" IsExpanded="true" />
         <EntityTypeShape EntityType="LARSModel.Contact_t" Width="1.5" PointX="0.75" PointY="1" IsExpanded="true" />
         <AssociationConnector Association="LARSModel.FK_CCInfo_t_Contact_t" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="LARSModel.Customer_t" Width="1.5" PointX="1.2329556277175229" PointY="13.415398797679412" />
+        <AssociationConnector Association="LARSModel.FK_CCInfo_t_Customer_t" />
+        <AssociationConnector Association="LARSModel.FK_Customer_t_Contact_t" />
+        <AssociationConnector Association="LARSModel.FK_Customer_t_Contact_t1" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

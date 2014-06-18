@@ -25,5 +25,6 @@ namespace migration
         public bool Active { get; set; }
     
         public virtual Contact_t Contact_t { get; set; }
+        public virtual Customer_t Customer_t { get; set; }
     }
 }

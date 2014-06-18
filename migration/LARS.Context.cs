@@ -27,5 +27,6 @@ namespace migration
     
         public DbSet<CCInfo_t> CCInfo_t { get; set; }
         public DbSet<Contact_t> Contact_t { get; set; }
+        public DbSet<Customer_t> Customer_t { get; set; }
     }
 }

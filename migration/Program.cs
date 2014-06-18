@@ -41,21 +41,21 @@ namespace migration
 
                     _logger.Info("Retrieving credit cards...");
 
-                    var query = db.CCInfo_t.Include("Contact_t").Where(p => p.Active);                    
+                    var query = db.CCInfo_t.AsNoTracking().Include("Contact_t").Where(p => p.Active);                    
                     long totalCount = query.LongCount();
 
                     _logger.InfoFormat("Found {0} credit card(s) ", totalCount);
 
-                    int i = 0;
+                    int i = 1;
                     foreach (var item in query)
                     {
                         _logger.InfoFormat("processing {0} of {1}", i++, totalCount);
+                        StringBuilder sb = new StringBuilder();
 
                         string cardNumber = string.Empty;
                         if (string.IsNullOrWhiteSpace(item.CCNum))
                         {
-                            Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "card number is missing");
-                            continue;
+                            sb.Append("Card number is missing. ");
                         }
                         cardNumber = LNEncryption.LNDecrypt(item.CCNum);
 
@@ -64,8 +64,7 @@ namespace migration
 
                         if (string.IsNullOrWhiteSpace(item.CCExpDate))
                         {
-                            Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "expiration date missing");
-                            continue;
+                            sb.Append("Expiration date missing." );
                         }
 
                         var parts = item.CCExpDate.Split(new char[] { '/' });
@@ -83,29 +82,25 @@ namespace migration
                             }
                             else
                             {
-                                Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "invalid expiration date");
-                                continue;
+                                sb.Append("Invalid expiration date. ");
                             }
                         }
                         int month = 0;
                         int year = 0;
                         if (!int.TryParse(expiryMonth, out month))
                         {
-                            Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "invalid month");
-                            continue;
+                            sb.Append("Invalid month. ");
                         }
 
                         if (!int.TryParse(expiryYear, out year))
                         {
-                            Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "invalid year"); 
-                            continue;
+                            sb.Append("Invalid year."); 
                         }
                         year = year + 2000;
 
                         if (new DateTime(year, month, 1) < DateTime.Now.Date)
                         {
-                            Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "credit card expired");
-                            continue;
+                            sb.Append("Credit card expired. ");
                         }
                         string creditCardType = string.Empty;
                         switch ((int)item.CCTypeID.GetValueOrDefault())
@@ -123,52 +118,70 @@ namespace migration
                                 creditCardType = "001";
                                 break;
                             default:
-                                Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "invalid credit card type");
-                                continue;
+                                sb.Append("Invalid credit card type. ");
+                                break;
                         }
+
+                        //try to get email from cc contact, customer current billing contact or  customer contact
                         string email = item.Contact_t.EmailAddress;
                         if (string.IsNullOrWhiteSpace(item.Contact_t.EmailAddress))
                         {
-                            //Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "email address is missing");
-                            //continue;
-                            email = "placeholder@loopnet.com";
+                            email = item.Customer_t.Contact_t.EmailAddress; //billing contact
+                            if (string.IsNullOrWhiteSpace(email))
+                            {
+                                email = item.Customer_t.Contact_t1.EmailAddress; //contact
+                            }
                         }
-                        StringBuilder sb = new StringBuilder();
-                        if (string.IsNullOrWhiteSpace(item.Contact_t.FirstName))
+                        var ccContact = GetContact(item.Contact_t);  //try contact attached to cc first
+                        var ccError = CheckContact(ccContact);
+                        if (!string.IsNullOrWhiteSpace(ccError))
                         {
-                            sb.Append("[FirstName] ");
+                            var billingContact = GetContact(item.Customer_t.Contact_t);
+                            var msg = CheckContact(billingContact);
+
+                            if (string.IsNullOrWhiteSpace(msg))
+                            {
+                                ccContact = billingContact;  //use customer current billing contact instead
+                                ccError = string.Empty;
+                            }
                         }
-                        if (string.IsNullOrWhiteSpace(item.Contact_t.LastName))
+                        if (!string.IsNullOrWhiteSpace(ccError))
                         {
-                            sb.Append("[LastName] ");
+                            sb.Append(ccError);
                         }
-                        if (string.IsNullOrWhiteSpace(item.Contact_t.City))
-                        {
-                            sb.Append("[City] ");
-                        }
-                        if (string.IsNullOrWhiteSpace(item.Contact_t.StreetLine1))
-                        {
-                            sb.Append("[StreetLine1] ");
-                        }
-                        if (string.IsNullOrWhiteSpace(item.Contact_t.State))
-                        {
-                            sb.Append("[State] ");
-                        }
-                        if (string.IsNullOrWhiteSpace(item.Contact_t.Zipcode))
-                        {
-                            sb.Append("[Zip] ");
-                        }
-                        if (string.IsNullOrWhiteSpace(item.Contact_t.Country))
-                        {
-                            sb.Append("[country] ");
-                        }
+
                         if (sb.Length > 0)
                         {
-                            Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "Billing address missing:" + sb.ToString());
+                            Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, sb.ToString());
                             continue;
                         }
 
-                        sucessCount++;
+                        ccContact.EmailAddress = email;
+                        var card = new CreditCard()
+                        {
+                            CardNumber = cardNumber,
+                            CardType = creditCardType,
+                            ExpirationMonth = month.ToString("00"),
+                            ExpirationYear = year.ToString("0000")
+                        };
+
+                        var response = CreateToken(profile, card, ccContact, (int)item.CustomerID);
+                        if (!response.Status)
+                        {
+                            Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, response.Message, response.ReasonCode);
+                            continue;
+                        }
+
+                        //save token
+                        if (!SaveToken(db, item.CCInfoID, response.Token))
+                        {
+                            Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "failed to save token", response.ReasonCode, response.Token);
+                            continue;
+                        }
+
+                        //log succesful token
+                        Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, true, response.Message, response.ReasonCode, response.Token);
+                        sucessCount++;                        
                     }
                     _logger.InfoFormat("completed in {0} with total:{1} and fail:{2}",
                         (DateTime.Now - start),
@@ -186,10 +199,70 @@ namespace migration
             }
         }
 
-        private static CreateTokenResponse CreateToken(Profile profile, CreditCard card, Contact billing)
+        private static bool SaveToken(LARSEntities db, decimal p1, string p2)
+        {
+            var result = db.Database.ExecuteSqlCommand("UPDATE CCInfo_t SET Token = {0} where CCInfoID = {1}", p2, p1);
+            return result > 0;
+        }
+        private static string CheckContact(Contact contact)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            if (string.IsNullOrWhiteSpace(contact.FirstName))
+            {
+                sb.Append("FirstName is missing. ");
+            }
+            if (string.IsNullOrWhiteSpace(contact.LastName))
+            {
+                sb.Append("LastName is missing ");
+            }
+            if (string.IsNullOrWhiteSpace(contact.City))
+            {
+                sb.Append("City is missing. ");
+            }
+            if (string.IsNullOrWhiteSpace(contact.StreetLine1))
+            {
+                sb.Append("StreetLine is missing. ");
+            }
+            if (string.IsNullOrWhiteSpace(contact.State))
+            {
+                sb.Append("State is missing. ");
+            }
+            if (string.IsNullOrWhiteSpace(contact.PostalCode))
+            {
+                sb.Append("Zip is missing. ");
+            }
+            if (string.IsNullOrWhiteSpace(contact.Country))
+            {
+                sb.Append("Country is missing. ");
+            }
+
+            return sb.ToString();
+
+        }
+        private static Contact GetContact(Contact_t fromContact)
+        {
+            return new Contact()
+            {
+                FirstName = fromContact.FirstName,
+                LastName = fromContact.LastName,
+                City = fromContact.City,
+                Country = fromContact.Country,
+                PostalCode = fromContact.Zipcode,
+                State = fromContact.State,
+                StreetLine1 = fromContact.StreetLine1
+            };
+
+        }
+        private static CreateTokenResponse CreateToken(Profile profile, CreditCard card, Contact billing, int customerId)
         {
             var service = new CybersourceTokenService();
-            return service.Create(profile, card, billing);            
+            var resp =  service.Create(profile, card, billing, string.Format("BID:{0}", customerId));
+            if (resp.Status)
+            {
+                resp.Token = string.Format("p{0}-{1}", profile.ProfileID, resp.Token);
+            }
+            return resp;
         }
 
         private static void Log(
@@ -202,7 +275,7 @@ namespace migration
             string reasonCode=null,
             string token=null)
         {
-            var msg = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}",
+            var msg = string.Format("{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8:MM/dd hh:mm:ss}",
                 customerId,
                 creditCardId,
                 creditCardTypeId,
@@ -210,7 +283,8 @@ namespace migration
                 status,
                 message,
                 reasonCode,
-                token);
+                token,
+                DateTime.Now);
 
             _file.WriteLine(msg);
             if (!status)

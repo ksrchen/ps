@@ -4,13 +4,26 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="LARSModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="LARSModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityContainer Name="LARSModelStoreContainer">
           <EntitySet Name="CCInfo_t" EntityType="LARSModel.Store.CCInfo_t" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Contact_t" EntityType="LARSModel.Store.Contact_t" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Customer_t" EntityType="LARSModel.Store.Customer_t" store:Type="Tables" Schema="dbo" />
           <AssociationSet Name="FK_CCInfo_t_Contact_t" Association="LARSModel.Store.FK_CCInfo_t_Contact_t">
             <End Role="Contact_t" EntitySet="Contact_t" />
             <End Role="CCInfo_t" EntitySet="CCInfo_t" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CCInfo_t_Customer_t" Association="LARSModel.Store.FK_CCInfo_t_Customer_t">
+            <End Role="Customer_t" EntitySet="Customer_t" />
+            <End Role="CCInfo_t" EntitySet="CCInfo_t" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Customer_t_Contact_t" Association="LARSModel.Store.FK_Customer_t_Contact_t">
+            <End Role="Contact_t" EntitySet="Contact_t" />
+            <End Role="Customer_t" EntitySet="Customer_t" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Customer_t_Contact_t1" Association="LARSModel.Store.FK_Customer_t_Contact_t1">
+            <End Role="Contact_t" EntitySet="Contact_t" />
+            <End Role="Customer_t" EntitySet="Customer_t" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="CCInfo_t">
@@ -49,6 +62,27 @@
           <Property Name="ImportSource" Type="tinyint" />
           <Property Name="Status" Type="tinyint" />
         </EntityType>
+        <EntityType Name="Customer_t">
+          <Key>
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Name="CustomerID" Type="numeric" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="AR_CustomerID" Type="nvarchar" MaxLength="50" />
+          <Property Name="AssociateID" Type="numeric" />
+          <Property Name="ContactID" Type="numeric" />
+          <Property Name="BillingContactID" Type="numeric" />
+          <Property Name="LastModifiedBy" Type="numeric" />
+          <Property Name="LastModifiedDate" Type="datetime" />
+          <Property Name="CustomerStatusID" Type="numeric" />
+          <Property Name="ImportSource" Type="tinyint" />
+          <Property Name="CustomerTypeID" Type="numeric" />
+          <Property Name="InvoiceDistributionTypeID" Type="smallint" />
+          <Property Name="CreatedDatetime" Type="datetime" />
+          <Property Name="AdditionalRecipient1" Type="varchar" MaxLength="64" />
+          <Property Name="AdditionalRecipient2" Type="varchar" MaxLength="64" />
+          <Property Name="TaxExempt" Type="bit" />
+          <Property Name="TaxComment" Type="varchar" MaxLength="256" />
+        </EntityType>
         <Association Name="FK_CCInfo_t_Contact_t">
           <End Role="Contact_t" Type="LARSModel.Store.Contact_t" Multiplicity="0..1" />
           <End Role="CCInfo_t" Type="LARSModel.Store.CCInfo_t" Multiplicity="*" />
@@ -61,8 +95,43 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
-    </edmx:StorageModels>
+        <Association Name="FK_CCInfo_t_Customer_t">
+          <End Role="Customer_t" Type="LARSModel.Store.Customer_t" Multiplicity="1" />
+          <End Role="CCInfo_t" Type="LARSModel.Store.CCInfo_t" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer_t">
+              <PropertyRef Name="CustomerID" />
+            </Principal>
+            <Dependent Role="CCInfo_t">
+              <PropertyRef Name="CustomerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Customer_t_Contact_t">
+          <End Role="Contact_t" Type="LARSModel.Store.Contact_t" Multiplicity="0..1" />
+          <End Role="Customer_t" Type="LARSModel.Store.Customer_t" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact_t">
+              <PropertyRef Name="ContactID" />
+            </Principal>
+            <Dependent Role="Customer_t">
+              <PropertyRef Name="BillingContactID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Customer_t_Contact_t1">
+          <End Role="Contact_t" Type="LARSModel.Store.Contact_t" Multiplicity="0..1" />
+          <End Role="Customer_t" Type="LARSModel.Store.Customer_t" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact_t">
+              <PropertyRef Name="ContactID" />
+            </Principal>
+            <Dependent Role="Customer_t">
+              <PropertyRef Name="ContactID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="LARSModel" Alias="Self" p1:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:p1="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -72,6 +141,19 @@
           <AssociationSet Name="FK_CCInfo_t_Contact_t" Association="LARSModel.FK_CCInfo_t_Contact_t">
             <End Role="Contact_t" EntitySet="Contact_t" />
             <End Role="CCInfo_t" EntitySet="CCInfo_t" />
+          </AssociationSet>
+          <EntitySet Name="Customer_t" EntityType="LARSModel.Customer_t" />
+          <AssociationSet Name="FK_CCInfo_t_Customer_t" Association="LARSModel.FK_CCInfo_t_Customer_t">
+            <End Role="Customer_t" EntitySet="Customer_t" />
+            <End Role="CCInfo_t" EntitySet="CCInfo_t" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Customer_t_Contact_t" Association="LARSModel.FK_Customer_t_Contact_t">
+            <End Role="Contact_t" EntitySet="Contact_t" />
+            <End Role="Customer_t" EntitySet="Customer_t" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Customer_t_Contact_t1" Association="LARSModel.FK_Customer_t_Contact_t1">
+            <End Role="Contact_t" EntitySet="Contact_t" />
+            <End Role="Customer_t" EntitySet="Customer_t" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="CCInfo_t">
@@ -89,6 +171,7 @@
           <Property Name="ContactID" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="Active" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Contact_t" Relationship="LARSModel.FK_CCInfo_t_Contact_t" FromRole="CCInfo_t" ToRole="Contact_t" />
+          <NavigationProperty Name="Customer_t" Relationship="LARSModel.FK_CCInfo_t_Customer_t" FromRole="CCInfo_t" ToRole="Customer_t" />
         </EntityType>
         <EntityType Name="Contact_t">
           <Key>
@@ -111,6 +194,8 @@
           <Property Name="ImportSource" Type="Byte" />
           <Property Name="Status" Type="Byte" />
           <NavigationProperty Name="CCInfo_t" Relationship="LARSModel.FK_CCInfo_t_Contact_t" FromRole="Contact_t" ToRole="CCInfo_t" />
+          <NavigationProperty Name="Customer_t" Relationship="LARSModel.FK_Customer_t_Contact_t" FromRole="Contact_t" ToRole="Customer_t" />
+          <NavigationProperty Name="Customer_t1" Relationship="LARSModel.FK_Customer_t_Contact_t1" FromRole="Contact_t" ToRole="Customer_t" />
         </EntityType>
         <Association Name="FK_CCInfo_t_Contact_t">
           <End Role="Contact_t" Type="LARSModel.Contact_t" Multiplicity="0..1" />
@@ -120,6 +205,66 @@
               <PropertyRef Name="ContactID" />
             </Principal>
             <Dependent Role="CCInfo_t">
+              <PropertyRef Name="ContactID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Customer_t">
+          <Key>
+            <PropertyRef Name="CustomerID" />
+          </Key>
+          <Property Type="Decimal" Name="CustomerID" Nullable="false" Precision="18" Scale="0" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="AR_CustomerID" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="AssociateID" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="ContactID" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="BillingContactID" Precision="18" Scale="0" />
+          <Property Type="Decimal" Name="LastModifiedBy" Precision="18" Scale="0" />
+          <Property Type="DateTime" Name="LastModifiedDate" Precision="3" />
+          <Property Type="Decimal" Name="CustomerStatusID" Precision="18" Scale="0" />
+          <Property Type="Byte" Name="ImportSource" />
+          <Property Type="Decimal" Name="CustomerTypeID" Precision="18" Scale="0" />
+          <Property Type="Int16" Name="InvoiceDistributionTypeID" />
+          <Property Type="DateTime" Name="CreatedDatetime" Precision="3" />
+          <Property Type="String" Name="AdditionalRecipient1" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdditionalRecipient2" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="TaxExempt" />
+          <Property Type="String" Name="TaxComment" MaxLength="256" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="CCInfo_t" Relationship="LARSModel.FK_CCInfo_t_Customer_t" FromRole="Customer_t" ToRole="CCInfo_t" />
+          <NavigationProperty Name="Contact_t" Relationship="LARSModel.FK_Customer_t_Contact_t" FromRole="Customer_t" ToRole="Contact_t" />
+          <NavigationProperty Name="Contact_t1" Relationship="LARSModel.FK_Customer_t_Contact_t1" FromRole="Customer_t" ToRole="Contact_t" />
+        </EntityType>
+        <Association Name="FK_CCInfo_t_Customer_t">
+          <End Type="LARSModel.Customer_t" Role="Customer_t" Multiplicity="1" />
+          <End Type="LARSModel.CCInfo_t" Role="CCInfo_t" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer_t">
+              <PropertyRef Name="CustomerID" />
+            </Principal>
+            <Dependent Role="CCInfo_t">
+              <PropertyRef Name="CustomerID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Customer_t_Contact_t">
+          <End Type="LARSModel.Contact_t" Role="Contact_t" Multiplicity="0..1" />
+          <End Type="LARSModel.Customer_t" Role="Customer_t" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact_t">
+              <PropertyRef Name="ContactID" />
+            </Principal>
+            <Dependent Role="Customer_t">
+              <PropertyRef Name="BillingContactID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Customer_t_Contact_t1">
+          <End Type="LARSModel.Contact_t" Role="Contact_t" Multiplicity="0..1" />
+          <End Type="LARSModel.Customer_t" Role="Customer_t" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Contact_t">
+              <PropertyRef Name="ContactID" />
+            </Principal>
+            <Dependent Role="Customer_t">
               <PropertyRef Name="ContactID" />
             </Dependent>
           </ReferentialConstraint>
@@ -164,6 +309,28 @@
                 <ScalarProperty Name="FaxID" ColumnName="FaxID" />
                 <ScalarProperty Name="ImportSource" ColumnName="ImportSource" />
                 <ScalarProperty Name="Status" ColumnName="Status" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Customer_t">
+            <EntityTypeMapping TypeName="LARSModel.Customer_t">
+              <MappingFragment StoreEntitySet="Customer_t">
+                <ScalarProperty Name="TaxComment" ColumnName="TaxComment" />
+                <ScalarProperty Name="TaxExempt" ColumnName="TaxExempt" />
+                <ScalarProperty Name="AdditionalRecipient2" ColumnName="AdditionalRecipient2" />
+                <ScalarProperty Name="AdditionalRecipient1" ColumnName="AdditionalRecipient1" />
+                <ScalarProperty Name="CreatedDatetime" ColumnName="CreatedDatetime" />
+                <ScalarProperty Name="InvoiceDistributionTypeID" ColumnName="InvoiceDistributionTypeID" />
+                <ScalarProperty Name="CustomerTypeID" ColumnName="CustomerTypeID" />
+                <ScalarProperty Name="ImportSource" ColumnName="ImportSource" />
+                <ScalarProperty Name="CustomerStatusID" ColumnName="CustomerStatusID" />
+                <ScalarProperty Name="LastModifiedDate" ColumnName="LastModifiedDate" />
+                <ScalarProperty Name="LastModifiedBy" ColumnName="LastModifiedBy" />
+                <ScalarProperty Name="BillingContactID" ColumnName="BillingContactID" />
+                <ScalarProperty Name="ContactID" ColumnName="ContactID" />
+                <ScalarProperty Name="AssociateID" ColumnName="AssociateID" />
+                <ScalarProperty Name="AR_CustomerID" ColumnName="AR_CustomerID" />
+                <ScalarProperty Name="CustomerID" ColumnName="CustomerID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

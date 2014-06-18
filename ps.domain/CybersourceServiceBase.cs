@@ -58,5 +58,14 @@ namespace ps.domain
         {
             return profile.Provider.ProviderSettings.FirstOrDefault(p => p.SettingName == "transactionProcessorUrl").SettingValue;
         }
+
+        protected string Combine(string[] fields)
+        {
+            if (fields != null)
+            {
+                return String.Join(",", fields);
+            }
+            return string.Empty;
+        }
     }
 }

@@ -59,6 +59,9 @@
     <Compile Include="Contact_t.cs">
       <DependentUpon>LARS.tt</DependentUpon>
     </Compile>
+    <Compile Include="Customer_t.cs">
+      <DependentUpon>LARS.tt</DependentUpon>
+    </Compile>
     <Compile Include="LARS.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

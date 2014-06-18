@@ -39,7 +39,7 @@ namespace ps.domain
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + string.Join(",", reply.missingField);
+                response.Message = reply.reasonCode + ". " + Combine(reply.missingField);
             }
             return response;
 
@@ -69,7 +69,7 @@ namespace ps.domain
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + string.Join(",", reply.missingField);
+                response.Message = reply.reasonCode + ". " + Combine(reply.missingField);
             }
             return response;
         }
@@ -98,7 +98,7 @@ namespace ps.domain
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + string.Join(",", reply.missingField); 
+                response.Message = reply.reasonCode + ". " + Combine(reply.missingField); 
             }
             else
             {
@@ -126,7 +126,7 @@ namespace ps.domain
             return response;
         }
 
-        public CreateTokenResponse Create(Profile profile, CreditCard creditCard, Contact billingContact)
+        public CreateTokenResponse Create(Profile profile, CreditCard creditCard, Contact billingContact, string referenceNumber)
         {
             var merchantId = GetMerchantId(profile);
             var transactionKey = GetTransactionKey(profile);
@@ -134,7 +134,7 @@ namespace ps.domain
 
             var request = CreateRequest();
             request.merchantID = merchantId;
-            request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
+            request.merchantReferenceCode = referenceNumber;
             request.paySubscriptionCreateService = new PaySubscriptionCreateService();
             request.paySubscriptionCreateService.run = "true";
 
@@ -168,7 +168,7 @@ namespace ps.domain
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + string.Join(",", reply.missingField); 
+                response.Message = reply.reasonCode + ". " + Combine(reply.missingField); 
             }
             else
             {
