@@ -39,7 +39,7 @@ namespace ps.domain
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + Combine(reply.missingField);
+                response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField);
             }
             return response;
 
@@ -69,7 +69,7 @@ namespace ps.domain
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + Combine(reply.missingField);
+                response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField);
             }
             return response;
         }
@@ -98,7 +98,7 @@ namespace ps.domain
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + Combine(reply.missingField); 
+                response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField); 
             }
             else
             {
@@ -168,7 +168,7 @@ namespace ps.domain
             if (reply.reasonCode != "100")
             {
                 response.Status = false;
-                response.Message = reply.reasonCode + ". " + Combine(reply.missingField); 
+                response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField); 
             }
             else
             {
