@@ -16,6 +16,30 @@ namespace migration
         private static StreamWriter _file;
         static void Main(string[] args)
         {
+            migrate();
+        }
+        static void deleteAll()
+        {
+            AppDomain.CurrentDomain.SetData("DataDirectory", ".\\");
+            var profileDomain = new ProfileDomain();
+            var profile = profileDomain.Get(1);
+
+            var service = new CybersourceTokenService();
+            using (var db = new LARSEntities())
+            {
+                var query = db.Database.SqlQuery<string>("SELECT token from CCinfo_t where token is not NULL");
+                foreach (var token in query)
+                {
+                    var parts = token.Split(new char[] { '-' });
+                    if (parts.Count() > 1)
+                    {
+                        service.Delete(profile, parts[1]);
+                    }
+                }
+            }
+        }
+        static void migrate()
+        {
             try
             {
 
@@ -173,7 +197,8 @@ namespace migration
                         }
 
                         //save token
-                        if (!SaveToken(db, item.CCInfoID, response.Token))
+                        string last4Digits = cardNumber.Length > 4 ? cardNumber.Substring(cardNumber.Length - 4, 4) : cardNumber;
+                        if (!SaveToken(db, item.CCInfoID, response.Token, last4Digits))
                         {
                             Log((int)item.CustomerID, (int)item.CCInfoID, (int)item.CCTypeID, item.CCExpDate, false, "failed to save token", response.ReasonCode, response.Token);
                             continue;
@@ -199,9 +224,9 @@ namespace migration
             }
         }
 
-        private static bool SaveToken(LARSEntities db, decimal p1, string p2)
+        private static bool SaveToken(LARSEntities db, decimal p1, string p2, string last4Digits)
         {
-            var result = db.Database.ExecuteSqlCommand("UPDATE CCInfo_t SET Token = {0} where CCInfoID = {1}", p2, p1);
+            var result = db.Database.ExecuteSqlCommand("UPDATE CCInfo_t SET Token = {0}, Last4Digits={2} where CCInfoID = {1}", p2, p1, last4Digits);
             return result > 0;
         }
         private static string CheckContact(Contact contact)
