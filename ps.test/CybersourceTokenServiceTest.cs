@@ -83,6 +83,41 @@ namespace ps.test
 
         }
 
+        [TestMethod]
+        public void CreateTokenWithFutureExpirationDateTest()
+        {
+            AppDomain.CurrentDomain.SetData("DataDirectory", ".\\App_Data");
+
+            var profileDomain = new ProfileDomain();
+            var profile = profileDomain.Get(1);
+
+            var service = new CybersourceTokenService();
+            var result = service.Create(profile, new models.CreditCard()
+            {
+                CardType = "001",
+                CardNumber = "",
+                ExpirationMonth = "02",
+                ExpirationYear = "2019"
+            },
+            new models.Contact
+            {
+                FirstName = "john",
+                LastName = "doe",
+                City = "glendora",
+                Country = "US",
+                EmailAddress = "a@b.com ",
+                PostalCode = "91789",
+                State = "CA",
+                StreetLine1 = "foo street",
+            },
+            DateTime.Now.Ticks.ToString()
+            );
+
+            Assert.IsTrue(result.Status);
+
+            DeleteToken(result.Token);
+
+        }
         private string CreateToken()
         {
             AppDomain.CurrentDomain.SetData("DataDirectory", ".\\App_Data");
