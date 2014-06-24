@@ -10,171 +10,197 @@ namespace ps.domain
 {
     public class CybersourceTokenService : CybersourceServiceBase, ITokenService
     {
+        private static readonly log4net.ILog _logger = log4net.LogManager.GetLogger(typeof(CybersourceTokenService));
+
         public UpdateTokenResponse Update(Profile profile, string token, CreditCard creditCard)
         {
-            var merchantId = GetMerchantId(profile);
-            var transactionKey = GetTransactionKey(profile);
-            var serviceEndPoint = GetServiceEndPoint(profile);
-            var request = CreateRequest();
-
-            request.merchantID = merchantId;
-            request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
-
-            request.paySubscriptionUpdateService = new PaySubscriptionUpdateService();
-            request.paySubscriptionUpdateService.run = "true";
-            
-            request.card = new Card();
-            request.card.expirationMonth = creditCard.ExpirationMonth;
-            request.card.expirationYear = creditCard.ExpirationYear;
-
-            request.recurringSubscriptionInfo = new RecurringSubscriptionInfo();
-            request.recurringSubscriptionInfo.subscriptionID = token;
-
-            var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
-
-            var reply = client.runTransaction(request);
-            var response = new UpdateTokenResponse();
-            response.Status = true;
-            response.ReasonCode = reply.reasonCode;
-            if (reply.reasonCode != "100")
+            using (log4net.NDC.Push("Update::"))
             {
-                response.Status = false;
-                response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField);
+                var merchantId = GetMerchantId(profile);
+                var transactionKey = GetTransactionKey(profile);
+                var serviceEndPoint = GetServiceEndPoint(profile);
+                var request = CreateRequest();
+
+                request.merchantID = merchantId;
+                request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
+
+                request.paySubscriptionUpdateService = new PaySubscriptionUpdateService();
+                request.paySubscriptionUpdateService.run = "true";
+
+                request.card = new Card();
+                request.card.expirationMonth = creditCard.ExpirationMonth;
+                request.card.expirationYear = creditCard.ExpirationYear;
+
+                request.recurringSubscriptionInfo = new RecurringSubscriptionInfo();
+                request.recurringSubscriptionInfo.subscriptionID = token;
+
+                var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
+
+                _logger.Info("\r\nrequest:" + request.ToJSON());
+                var reply = client.runTransaction(request);
+                _logger.Info("\r\nreply:" + reply.ToJSON());
+
+                var response = new UpdateTokenResponse();
+                response.Status = true;
+                response.ReasonCode = reply.reasonCode;
+                if (reply.reasonCode != "100")
+                {
+                    response.Status = false;
+                    response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField);
+                }
+                return response;
             }
-            return response;
 
         }
 
         public DeleteTokenResponse Delete(Profile profile, string token)
         {
-            var merchantId = GetMerchantId(profile);
-            var transactionKey = GetTransactionKey(profile);
-            var serviceEndPoint = GetServiceEndPoint(profile);
-            var request = CreateRequest();
-            request.merchantID = merchantId;
-            request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
-
-            request.paySubscriptionDeleteService = new PaySubscriptionDeleteService();
-            request.paySubscriptionDeleteService.run = "true";
-
-            request.recurringSubscriptionInfo = new RecurringSubscriptionInfo();
-            request.recurringSubscriptionInfo.subscriptionID = token;
-
-            var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
-
-            var reply = client.runTransaction(request);
-            var response = new DeleteTokenResponse();
-            response.Status = true;
-            response.ReasonCode = reply.reasonCode;
-            if (reply.reasonCode != "100")
+            using (log4net.NDC.Push("Delete::"))
             {
-                response.Status = false;
-                response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField);
+                var merchantId = GetMerchantId(profile);
+                var transactionKey = GetTransactionKey(profile);
+                var serviceEndPoint = GetServiceEndPoint(profile);
+                var request = CreateRequest();
+                request.merchantID = merchantId;
+                request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
+
+                request.paySubscriptionDeleteService = new PaySubscriptionDeleteService();
+                request.paySubscriptionDeleteService.run = "true";
+
+                request.recurringSubscriptionInfo = new RecurringSubscriptionInfo();
+                request.recurringSubscriptionInfo.subscriptionID = token;
+
+                var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
+
+                _logger.Info("\r\nrequest:" + request.ToJSON());
+                var reply = client.runTransaction(request);
+                _logger.Info("\r\nreply:" + reply.ToJSON());
+
+                var response = new DeleteTokenResponse();
+                response.Status = true;
+                response.ReasonCode = reply.reasonCode;
+                if (reply.reasonCode != "100")
+                {
+                    response.Status = false;
+                    response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField);
+                }
+                return response;
             }
-            return response;
         }
 
         public GetTokenDetailResponse Get(Profile profile, string token)
         {
-            var merchantId = GetMerchantId(profile);
-            var transactionKey = GetTransactionKey(profile);
-            var serviceEndPoint = GetServiceEndPoint(profile);
-
-            var request = CreateRequest();
-            request.merchantID = merchantId;
-            request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
-            request.paySubscriptionRetrieveService = new PaySubscriptionRetrieveService();
-            request.paySubscriptionRetrieveService.run = "true";
-
-            request.recurringSubscriptionInfo = new RecurringSubscriptionInfo();
-            request.recurringSubscriptionInfo.subscriptionID = token;
-
-            var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
-
-            var reply = client.runTransaction(request);
-            var response = new GetTokenDetailResponse();
-            response.Status = true;
-            response.ReasonCode = reply.reasonCode;
-            if (reply.reasonCode != "100")
+            using (log4net.NDC.Push("Get::"))
             {
-                response.Status = false;
-                response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField); 
-            }
-            else
-            {
-                response.CreditCard = new CreditCard
+                var merchantId = GetMerchantId(profile);
+                var transactionKey = GetTransactionKey(profile);
+                var serviceEndPoint = GetServiceEndPoint(profile);
+
+                var request = CreateRequest();
+                request.merchantID = merchantId;
+                request.merchantReferenceCode = DateTime.Now.Ticks.ToString();
+                request.paySubscriptionRetrieveService = new PaySubscriptionRetrieveService();
+                request.paySubscriptionRetrieveService.run = "true";
+
+                request.recurringSubscriptionInfo = new RecurringSubscriptionInfo();
+                request.recurringSubscriptionInfo.subscriptionID = token;
+
+                var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
+
+                _logger.Info("\r\nrequest:" + request.ToJSON());
+                var reply = client.runTransaction(request);
+                _logger.Info("\r\nreply:" + reply.ToJSON());
+
+                var response = new GetTokenDetailResponse();
+                response.Status = true;
+                response.ReasonCode = reply.reasonCode;
+                if (reply.reasonCode != "100")
                 {
-                    CardNumber = reply.paySubscriptionRetrieveReply.cardAccountNumber,
-                    CardType = reply.paySubscriptionRetrieveReply.cardType,
-                    ExpirationMonth = reply.paySubscriptionRetrieveReply.cardExpirationMonth,
-                    ExpirationYear = reply.paySubscriptionRetrieveReply.cardExpirationYear,                    
-                };
-                response.BillingContact = new Contact
+                    response.Status = false;
+                    response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField);
+                }
+                else
                 {
-                    FirstName = reply.paySubscriptionRetrieveReply.firstName,
-                    LastName = reply.paySubscriptionRetrieveReply.lastName,
-                    City = reply.paySubscriptionRetrieveReply.city,
-                    Country = reply.paySubscriptionRetrieveReply.country,
-                    CompanyName = reply.paySubscriptionRetrieveReply.companyName,
-                    EmailAddress = reply.paySubscriptionRetrieveReply.email,
-                    PostalCode = reply.paySubscriptionRetrieveReply.postalCode,
-                    State = reply.paySubscriptionRetrieveReply.state,
-                    StreetLine1 = reply.paySubscriptionRetrieveReply.street1,
-                    StreetLine2 = reply.paySubscriptionRetrieveReply.street2,                   
-                };
+                    response.CreditCard = new CreditCard
+                    {
+                        CardNumber = reply.paySubscriptionRetrieveReply.cardAccountNumber,
+                        CardType = reply.paySubscriptionRetrieveReply.cardType,
+                        ExpirationMonth = reply.paySubscriptionRetrieveReply.cardExpirationMonth,
+                        ExpirationYear = reply.paySubscriptionRetrieveReply.cardExpirationYear,
+                    };
+                    response.BillingContact = new Contact
+                    {
+                        FirstName = reply.paySubscriptionRetrieveReply.firstName,
+                        LastName = reply.paySubscriptionRetrieveReply.lastName,
+                        City = reply.paySubscriptionRetrieveReply.city,
+                        Country = reply.paySubscriptionRetrieveReply.country,
+                        CompanyName = reply.paySubscriptionRetrieveReply.companyName,
+                        EmailAddress = reply.paySubscriptionRetrieveReply.email,
+                        PostalCode = reply.paySubscriptionRetrieveReply.postalCode,
+                        State = reply.paySubscriptionRetrieveReply.state,
+                        StreetLine1 = reply.paySubscriptionRetrieveReply.street1,
+                        StreetLine2 = reply.paySubscriptionRetrieveReply.street2,
+                    };
+                }
+                return response;
             }
-            return response;
         }
 
         public CreateTokenResponse Create(Profile profile, CreditCard creditCard, Contact billingContact, string referenceNumber)
         {
-            var merchantId = GetMerchantId(profile);
-            var transactionKey = GetTransactionKey(profile);
-            var serviceEndPoint = GetServiceEndPoint(profile);
-
-            var request = CreateRequest();
-            request.merchantID = merchantId;
-            request.merchantReferenceCode = referenceNumber;
-            request.paySubscriptionCreateService = new PaySubscriptionCreateService();
-            request.paySubscriptionCreateService.run = "true";
-
-            request.recurringSubscriptionInfo = new RecurringSubscriptionInfo() { frequency = "on-demand"};
-            request.card = new Card()
+            using (log4net.NDC.Push("Create::"))
             {
-                cardType = creditCard.CardType,
-                accountNumber = creditCard.CardNumber,
-                expirationMonth = creditCard.ExpirationMonth,
-                expirationYear = creditCard.ExpirationYear
-            };
-            request.billTo = new BillTo()
-            {
-                firstName = billingContact.FirstName,
-                lastName = billingContact.LastName,
-                city = billingContact.City,
-                country = billingContact.Country,
-                email = billingContact.EmailAddress,
-                postalCode = billingContact.PostalCode,
-                state = billingContact.State,
-                street1 = billingContact.StreetLine1,
-            };
-            request.purchaseTotals = new PurchaseTotals() { currency = "USD" };
+                var merchantId = GetMerchantId(profile);
+                var transactionKey = GetTransactionKey(profile);
+                var serviceEndPoint = GetServiceEndPoint(profile);
 
-            var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
+                var request = CreateRequest();
+                request.merchantID = merchantId;
+                request.merchantReferenceCode = referenceNumber;
+                request.paySubscriptionCreateService = new PaySubscriptionCreateService();
+                request.paySubscriptionCreateService.run = "true";
 
-            var reply = client.runTransaction(request);
-            var response = new CreateTokenResponse();
-            response.Status = true;
-            response.ReasonCode = reply.reasonCode;
-            if (reply.reasonCode != "100")
-            {
-                response.Status = false;
-                response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField); 
+                request.recurringSubscriptionInfo = new RecurringSubscriptionInfo() { frequency = "on-demand" };
+                request.card = new Card()
+                {
+                    cardType = creditCard.CardType,
+                    accountNumber = creditCard.CardNumber,
+                    expirationMonth = creditCard.ExpirationMonth,
+                    expirationYear = creditCard.ExpirationYear
+                };
+                request.billTo = new BillTo()
+                {
+                    firstName = billingContact.FirstName,
+                    lastName = billingContact.LastName,
+                    city = billingContact.City,
+                    country = billingContact.Country,
+                    email = billingContact.EmailAddress,
+                    postalCode = billingContact.PostalCode,
+                    state = billingContact.State,
+                    street1 = billingContact.StreetLine1,
+                };
+                request.purchaseTotals = new PurchaseTotals() { currency = "USD" };
+
+                var client = GetCybersourceService(serviceEndPoint, merchantId, transactionKey);
+
+                _logger.Info("\r\nrequest:" + request.ToJSON());
+                var reply = client.runTransaction(request);
+                _logger.Info("\r\nreply:" + reply.ToJSON());
+
+                var response = new CreateTokenResponse();
+                response.Status = true;
+                response.ReasonCode = reply.reasonCode;
+                if (reply.reasonCode != "100")
+                {
+                    response.Status = false;
+                    response.Message = reply.reasonCode + ". " + Combine(reply.missingField) + Combine(reply.invalidField);
+                }
+                else
+                {
+                    response.Token = reply.paySubscriptionCreateReply.subscriptionID;
+                }
+                return response;
             }
-            else
-            {
-                response.Token = reply.paySubscriptionCreateReply.subscriptionID;       
-            }
-            return response;
-        }        
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace ps.test
             var profile = profileDomain.Get(1);
 
             var service = new CybersourcePaymentService();
-            var result = service.Sales(profile, "4030236031190176056428", new models.TransactionRequest
+            var result = service.Sales(profile, "4036255971830178147625", new models.TransactionRequest
             {
                 Amount = 9900,
                 Currency = "USD",
